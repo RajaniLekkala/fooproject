@@ -3,7 +3,7 @@ agent any
 stages {
 stage('Checkout') {
 steps {
-git 'https://github.com/USERNAME/REPO.git'
+git 'https://github.com/RajaniLekkala/fooproject.git'
 }
 }
 stage('Build') {

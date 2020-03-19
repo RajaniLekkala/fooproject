@@ -23,11 +23,10 @@ pipeline {
                                      junit '**/*xml'
                                 }
                             }
-                        }
+                }
             }
        }
-
-    }
+     }
 
     post {
         always {

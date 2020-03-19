@@ -3,13 +3,13 @@ agent any
 stages {
 stage('Checkout') {
 steps {
-git 'https://github.com/RajaniLekkala/fooproject.git'
+git 'https://github.com/RajaniLekkala/MavenTestProject.git'
 }
 }
 stage('Build') {
-steps {
-sh "mvn compile"
-}
+    steps {
+    sh "mvn compile"
+    }
 }
 stage('Test') {
 steps {
@@ -22,5 +22,16 @@ emailext attachLog: true, attachmentsPattern: '**/TEST*xml', body: '', recipient
 }
 }
 }
+ stage('newman') {
+            steps {
+                sh 'newman run Restful_Booker_Facit.postman_collection.json --environment Restful_Booker.postman_environment.json --reporters junit'
+            }
+            post {
+                always {
+                        junit '**/*xml'
+                    }
+                }
+        }
+
 }
 }

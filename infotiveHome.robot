@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation  This is some basic info about the whole test suite of infotiv rental car webpage
-Resource       ../Resources/keywords.robot
+Resource       keywords.robot  #../Resources/keywords.robot
 Library        SeleniumLibrary
 Library        DateTime
 

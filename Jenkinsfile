@@ -15,11 +15,7 @@ pipeline {
             steps {
                 sh "mvn test"
             }
-            post {
-                 always {
-                      junit '**/TEST.xml'
-                 }
-            }
+
         }
        stage('newman') {
             steps {
@@ -32,7 +28,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             junit '**/TEST.xml'

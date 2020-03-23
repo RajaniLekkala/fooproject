@@ -55,13 +55,15 @@ Verify The Max Date For The Start Date
 
 
 Verify Selected Start Date Should Be Between Min and Max Values
-    Click Element               id:start
-    Press Keys                  id:start                {03-10}
-    ${link_text} =              Get Value               id:start
-    ${min_value_start} =        Get Element Attribute   id:start   attribute=min
-    ${max_value_start} =        Get Element Attribute   id:start   attribute=max
-    Should Be True              '${link_text}'<='${max_value_start}'
-    Should Be True              '${link_text}'>='${min_value_start}'
+
+       Click Element            id:start
+       Press Keys               id:start                 {03-23}
+       ${link_text} =            Get Value               id:start
+       ${min_value_start} =      Get Element Attribute   id:start   attribute=min
+       ${max_value_start} =      Get Element Attribute   id:start   attribute=max
+       Should Be True      '${link_text}'<='${max_value_start}'
+       Should Be True      '${link_text}'>='${min_value_start}'
+
 
 
 Verify The Min Date For The End Date
@@ -107,14 +109,14 @@ Verify The User Is In The Home Page Ater Login In
 
 Choose Start And End Dates To Book A Car
     Click Element       id:start
-    Press Keys          id:start     {03-15}
+    Press Keys          id:start     {03-23}
     Press Keys          id:end       {03-29}
     Click Element       id:continue
 
 
 Verify Car Booked Date Is Correct Or Not
     ${link_text}        Get Text        xpath://*[@id="showQuestion"]/label
-    Should Be Equal     ${link_text}    Selected trip dates: 2020-03-15 – 2020-03-29
+    Should Be Equal     ${link_text}    Selected trip dates: 2020-03-23 – 2020-03-29
 
 
 Select Type Of Car
@@ -123,6 +125,7 @@ Select Type Of Car
     Click Button        xpath://*[@id="ms-list-2"]/button
     Select Checkbox     id:ms-opt-6
     Click Element       id:rightpane
+    sleep               3s
     Wait Until Page Contains Element    id:carSelect1
     Click Element       id:carSelect1
 
@@ -141,13 +144,13 @@ Confirm Booking Of User Selected Car
 
 
 Verify The Confirmation Message
-    Element Should Contain      id:questionTextSmall    pickup 2020-03-15
+    Element Should Contain      id:questionTextSmall    pickup 2020-03-23
 
 
 Should Be able to verify whether car is booked or not
      Click Button                    id:mypage
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       2        Tesla
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-15
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-23
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        2020-03-29
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       6        5
 
@@ -176,11 +179,11 @@ User Shiould Be Able To Book A Car
      ${link_text} =      Get Text  id:questionText
      Should Be Equal     ${link_text}    When do you want to make your trip?
      Click Element       id:start
-     Press Keys          id:start     {03-15}
+     Press Keys          id:start     {03-23}
      Press Keys          id:end       {03-29}
      Click Element       id:continue
      ${link_text}        Get Text        xpath://*[@id="showQuestion"]/label
-     Should Be Equal     ${link_text}    Selected trip dates: 2020-03-15 – 2020-03-29
+     Should Be Equal     ${link_text}    Selected trip dates: 2020-03-23 – 2020-03-29
      Click Button        xpath://*[@id="ms-list-1"]/button
      Select Checkbox     id:ms-opt-3
      Click Button        xpath://*[@id="ms-list-2"]/button
@@ -194,11 +197,11 @@ User Shiould Be Able To Book A Car
      Select From List By Index      xpath://*[@id="confirmSelection"]/form/select[2]   4
      Input Text                     id:cvc              123
      Click Button                   id:confirm
-     Element Should Contain         id:questionTextSmall    pickup 2020-03-15
+     Element Should Contain         id:questionTextSmall    pickup 2020-03-23
      Click Button                   id:mypage
      Click Button                   id:mypage
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       2        Tesla
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-15
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-23
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        2020-03-29
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       6        5
 

@@ -1,11 +1,16 @@
+*** Settings ***
+Library     SeleniumLibrary
+Library     DateTime
+
+*** Variables ***
+${BROWSER} =  chrome
+${URL} =  http://rental30.infotiv.net/
+
 
 *** Keywords ***
 Begin Web Test
     Open Browser                about:blank   ${BROWSER}
     Maximize Browser Window
-
-
-Load Page
     Go To                       ${URL}
 
 
@@ -22,22 +27,21 @@ Verify Title Of Home Page Is Clickable
 
 Verify Home Page Logo Is Clickable
     Click Element       id:logo
-    ${link_text} =      Get Text  id:questionText
+    ${link_text} =      Get Text        id:questionText
     Should Be Equal     ${link_text}    When do you want to make your trip?
 
 
 Verify Login Functionality With Wrong Credentials
-    Input Text      id:email    sdsf12433434
-    Input Text      id:password   sdfs32434
+    Input Text              id:email        sdsf12433434
+    Input Text              id:password     sdfs32434
     Click Button            id:login
-    ${link_text} =          Get Text  id:signInError
-    Should Be Equal         ${link_text}   Wrong e-mail or password
-
+    ${link_text} =          Get Text        id:signInError
+    Should Be Equal         ${link_text}    Wrong e-mail or password
 
 
 Verify Display Start Date Is Current Date Or Not
-    ${selected_date} =       Get Value  id:start
-    ${current_date} =        Get Current Date  local  result_format=%Y-%m-%d
+    ${selected_date} =       Get Value          id:start
+    ${current_date} =        Get Current Date   local  result_format=%Y-%m-%d
     Should Be Equal          ${current_date}    ${selected_date}
 
 
@@ -55,14 +59,14 @@ Verify The Max Date For The Start Date
 
 
 Verify Selected Start Date Should Be Between Min and Max Values
-
-       Click Element            id:start
-       Press Keys               id:start                 {03-23}
-       ${link_text} =            Get Value               id:start
-       ${min_value_start} =      Get Element Attribute   id:start   attribute=min
-       ${max_value_start} =      Get Element Attribute   id:start   attribute=max
-       Should Be True      '${link_text}'<='${max_value_start}'
-       Should Be True      '${link_text}'>='${min_value_start}'
+       Click Element                        id:start
+       ${Start_date} =                      Get Time                        day month           now+2 day
+       Input Text                           id:start                        ${Start_date}
+       ${link_text} =                       Get Value                       id:start
+       ${min_value_start} =                 Get Element Attribute           id:start           attribute=min
+       ${max_value_start} =                 Get Element Attribute           id:start           attribute=max
+       Should Be True                       '${link_text}'<='${max_value_start}'
+       Should Be True                       '${link_text}'>='${min_value_start}'
 
 
 
@@ -94,10 +98,13 @@ Verify Add A Day To Max Date (Invalid) For the Start Date
         Should Not Be Equal                 ${new_max_value_add_A_day}      ${max_value_start}
 
 
-Verify User Login Functionality
+User Login With Proper Credentials
     Input Text          id:email        rajani.lekkala@gmail.com
     Input Text          id:password     hariraj2031
     Click Button        id:login
+
+
+Verify User Login Functionality
     ${label_text}        Get Text         xpath://*[@id="welcomePhrase"]   #id:welcomePhrase
     Should Be Equal      ${label_text}    You are signed in as Rajani
 
@@ -108,15 +115,22 @@ Verify The User Is In The Home Page Ater Login In
 
 
 Choose Start And End Dates To Book A Car
-    Click Element       id:start
-    Press Keys          id:start     {03-23}
-    Press Keys          id:end       {03-29}
-    Click Element       id:continue
+        Click Element                        id:start
+        ${Book_Start_date} =                 Get Time                       day month           now+2 day
+        Input Text                           id:start                       ${Book_Start_date}
+        Click Element                        id:end
+        ${Book_End_date} =                   Get Time                       day month           now+4 day
+        Input Text                           id:end                         ${Book_End_date}
+        Click Button                         id:continue
 
 
 Verify Car Booked Date Is Correct Or Not
-    ${link_text}        Get Text        xpath://*[@id="showQuestion"]/label
-    Should Be Equal     ${link_text}    Selected trip dates: 2020-03-23 – 2020-03-29
+     ${link_text}                    Get Text                       xpath://*[@id="showQuestion"]/label
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_Start_date} =            Add Time To Date               ${current_date}      2 days       result_format=%Y-%m-%d
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_End_date} =              Add Time To Date               ${current_date}      4 days       result_format=%Y-%m-%d
+     Should Be Equal                 ${link_text}                   Selected trip dates: ${Book_Start_date} – ${Book_End_date}
 
 
 Select Type Of Car
@@ -125,7 +139,6 @@ Select Type Of Car
     Click Button        xpath://*[@id="ms-list-2"]/button
     Select Checkbox     id:ms-opt-6
     Click Element       id:rightpane
-    sleep               3s
     Wait Until Page Contains Element    id:carSelect1
     Click Element       id:carSelect1
 
@@ -144,15 +157,29 @@ Confirm Booking Of User Selected Car
 
 
 Verify The Confirmation Message
-    Element Should Contain      id:questionTextSmall    pickup 2020-03-23
+    ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+    ${Book_Start_date} =            Add Time To Date               ${current_date}      2 days       result_format=%Y-%m-%d
+    Element Should Contain          id:questionTextSmall           pickup ${Book_Start_date}
 
 
 Should Be able to verify whether car is booked or not
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_Start_date} =            Add Time To Date               ${current_date}      2 days       result_format=%Y-%m-%d
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_End_date} =              Add Time To Date               ${current_date}      4 days       result_format=%Y-%m-%d
      Click Button                    id:mypage
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       2        Tesla
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-23
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        2020-03-29
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        ${Book_Start_date}
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        ${Book_End_date}
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       6        5
+
+
+Should Be Able To Cancel Booking
+        Click Element                       id:rightpane
+        Sleep                               5s
+        Click Element                       xpath://*[@id="unBook1"]
+        sleep                               3s
+        Handle Alert                        ACCEPT
 
 
 
@@ -170,20 +197,24 @@ Create User And Verify Whether The User Is Created Or Not
     Should Be Equal     ${confirm_text}         You are signed in as abc
 
 
-User Shiould Be Able To Book A Car
-     Input Text          id:email        rajani.lekkala@gmail.com
-     Input Text          id:password     hariraj2031
-     Click Button        id:login
-     ${label_text}        Get Text        xpath://*[@id="welcomePhrase"]   #id:welcomePhrase
-     Should Be Equal     ${label_text}    You are signed in as Rajani
-     ${link_text} =      Get Text  id:questionText
-     Should Be Equal     ${link_text}    When do you want to make your trip?
-     Click Element       id:start
-     Press Keys          id:start     {03-23}
-     Press Keys          id:end       {03-29}
-     Click Element       id:continue
-     ${link_text}        Get Text        xpath://*[@id="showQuestion"]/label
-     Should Be Equal     ${link_text}    Selected trip dates: 2020-03-23 – 2020-03-29
+User Shiould Be Able To Book A Car By Providing Proper Data
+     ${label_text}          Get Text        xpath://*[@id="welcomePhrase"]   #id:welcomePhrase
+     Should Be Equal        ${label_text}   You are signed in as Rajani
+     ${link_text} =         Get Text        id:questionText
+     Should Be Equal        ${link_text}    When do you want to make your trip?
+     Click Element          id:start
+     ${Book_Start_date} =   Get Time        day month           now+2 day
+     Input Text             id:start        ${Book_Start_date}
+     Click Element          id:end
+     ${Book_End_date} =     Get Time        day month           now+4 day
+     Input Text             id:end          ${Book_End_date}
+     Click Button           id:continue
+     ${link_text}        Get Text           xpath://*[@id="showQuestion"]/label
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_Start_date} =            Add Time To Date               ${current_date}      2 days       result_format=%Y-%m-%d
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_End_date} =              Add Time To Date               ${current_date}      4 days       result_format=%Y-%m-%d
+     Should Be Equal                 ${link_text}                   Selected trip dates: ${Book_Start_date} – ${Book_End_date}
      Click Button        xpath://*[@id="ms-list-1"]/button
      Select Checkbox     id:ms-opt-3
      Click Button        xpath://*[@id="ms-list-2"]/button
@@ -197,12 +228,19 @@ User Shiould Be Able To Book A Car
      Select From List By Index      xpath://*[@id="confirmSelection"]/form/select[2]   4
      Input Text                     id:cvc              123
      Click Button                   id:confirm
-     Element Should Contain         id:questionTextSmall    pickup 2020-03-23
+     Element Should Contain         id:questionTextSmall    pickup ${Book_Start_date}
+
+
+User Should Be Able To View The Booked Car In MyPage
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_Start_date} =            Add Time To Date               ${current_date}      2 days       result_format=%Y-%m-%d
+     ${current_date} =               Get Current Date               local                             result_format=%Y-%m-%d
+     ${Book_End_date} =              Add Time To Date               ${current_date}      4 days       result_format=%Y-%m-%d
      Click Button                   id:mypage
      Click Button                   id:mypage
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       2        Tesla
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        2020-03-23
-     Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        2020-03-29
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       4        ${Book_Start_date}
+     Table Column Should Contain     xpath://*[@id="middlepane"]/table       5        ${Book_End_date}
      Table Column Should Contain     xpath://*[@id="middlepane"]/table       6        5
 
 

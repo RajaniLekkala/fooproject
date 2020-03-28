@@ -27,6 +27,17 @@ pipeline {
                 }
             }
         }
+       stage('code coverage') {
+             steps {
+                  sh "mvn cobertura:cobertura"
+             }
+             post {
+                   always {
+                         junit '**/TEST*.xml'
+                   }
+             }
+
+       }
        stage('Robot Framework System tests with Selenium') {
                     steps {
                         sh 'robot -d results --variable BROWSER:headlesschrome infotiveHome.robot'
